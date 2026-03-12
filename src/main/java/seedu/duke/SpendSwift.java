@@ -27,7 +27,7 @@ public class SpendSwift {
         System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
 
         boolean isExit = false;
-        while (!isExit) {
+        while (!isExit && scanner.hasNextLine()) {
             String fullCommand = scanner.nextLine().trim();
             if (fullCommand.isEmpty()) {
                 continue;
