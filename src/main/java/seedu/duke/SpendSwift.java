@@ -7,13 +7,18 @@ import java.util.Scanner;
  * Initializes the application and starts the interaction loop with the user.
  */
 public class SpendSwift {
+    private static final String DATA_FILE_PATH = "data/expenses.txt";
     private ExpenseList expenseList;
+    private Storage storage;
 
     /**
      * Constructs a SpendSwift instance and initializes the core components.
+     * Loads any previously saved expenses from disk.
      */
     public SpendSwift() {
         expenseList = new ExpenseList();
+        storage = new Storage(DATA_FILE_PATH);
+        storage.load(expenseList);
     }
 
     /**
@@ -41,6 +46,7 @@ public class SpendSwift {
                 break;
             case "exit":
                 isExit = true;
+                storage.save(expenseList);
                 System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
                 System.out.println("Bye. Hope to see you again soon!");
                 System.out.print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");

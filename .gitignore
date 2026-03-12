@@ -16,6 +16,9 @@ bin/
 /text-ui-test/ACTUAL.TXT
 text-ui-test/EXPECTED-UNIX.TXT
 
+# Application data files (generated at runtime)
+/data/
+
 # Course PDFs and style guides (local only)
 *.pdf
 
