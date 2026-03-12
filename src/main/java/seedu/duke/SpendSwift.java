@@ -39,7 +39,7 @@ public class SpendSwift {
                 isExit = true;
                 System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
                 System.out.println("Bye. Hope to see you again soon!");
-                System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+                System.out.print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
             } else {
                 // The rest of the team will add their commands here!
                 System.out.println("Command not recognized yet! Team is working on it.");
