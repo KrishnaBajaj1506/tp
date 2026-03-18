@@ -42,15 +42,7 @@ public class Parser {
             try {
                 double amount = Double.parseDouble(addParts[0]);
                 String description = addParts[1];
-
-                // WORKAROUND: Wrap the old AddCommand in an anonymous Command
-                return new Command(ui) {
-                    @Override
-                    public void execute(ExpenseList expenseList) {
-                        AddCommand addCommand = new AddCommand(description, amount);
-                        addCommand.execute(expenseList, ui);
-                    }
-                };
+                return new AddCommand(ui, description, amount);
             } catch (NumberFormatException e) {
                 ui.showInvalidAmount();
                 return null;
@@ -64,15 +56,7 @@ public class Parser {
 
             try {
                 int index = Integer.parseInt(arguments);
-
-                // WORKAROUND: Wrap the DeleteCommand in an anonymous Command
-                return new Command(ui) {
-                    @Override
-                    public void execute(ExpenseList expenseList) {
-                        DeleteCommand deleteCommand = new DeleteCommand(index);
-                        deleteCommand.execute(expenseList, ui);
-                    }
-                };
+                return new DeleteCommand(ui, index);
             } catch (NumberFormatException e) {
                 ui.showInvalidIndexFormat();
                 return null;
