@@ -9,9 +9,9 @@ public class AddCommandTest {
     public void execute_singleExpense_expenseAddedToList() {
         ExpenseList expenseList = new ExpenseList();
         Ui ui = new Ui();
-        AddCommand addCommand = new AddCommand("Coffee", 5.50);
+        AddCommand addCommand = new AddCommand(ui, "Coffee", 5.50);
 
-        addCommand.execute(expenseList, ui);
+        addCommand.execute(expenseList);
 
         assertEquals(1, expenseList.getSize());
         assertEquals("Coffee", expenseList.getExpense(0).getDescription());
@@ -23,11 +23,11 @@ public class AddCommandTest {
         ExpenseList expenseList = new ExpenseList();
         Ui ui = new Ui();
 
-        AddCommand firstExpense = new AddCommand("Coffee", 5.50);
-        AddCommand secondExpense = new AddCommand("Lunch", 12.30);
+        AddCommand firstExpense = new AddCommand(ui, "Coffee", 5.50);
+        AddCommand secondExpense = new AddCommand(ui, "Lunch", 12.30);
 
-        firstExpense.execute(expenseList, ui);
-        secondExpense.execute(expenseList, ui);
+        firstExpense.execute(expenseList);
+        secondExpense.execute(expenseList);
 
         assertEquals(2, expenseList.getSize());
 
@@ -42,9 +42,9 @@ public class AddCommandTest {
     public void execute_zeroAmount_expenseAdded() {
         ExpenseList expenseList = new ExpenseList();
         Ui ui = new Ui();
-        AddCommand addCommand = new AddCommand("Free sample", 0.0);
+        AddCommand addCommand = new AddCommand(ui, "Free sample", 0.0);
 
-        addCommand.execute(expenseList, ui);
+        addCommand.execute(expenseList);
 
         assertEquals(1, expenseList.getSize());
         assertEquals("Free sample", expenseList.getExpense(0).getDescription());

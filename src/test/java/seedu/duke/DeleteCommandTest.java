@@ -19,8 +19,8 @@ public class DeleteCommandTest {
     @Test
     public void execute_validIndex_removesCorrectExpense() {
         // User types "delete 1" -> refers to "Lunch"
-        DeleteCommand deleteCommand = new DeleteCommand(1);
-        deleteCommand.execute(expenseList, ui);
+        DeleteCommand deleteCommand = new DeleteCommand(ui, 1);
+        deleteCommand.execute(expenseList);
 
         assertEquals(1, expenseList.getSize());
         assertEquals("Dinner", expenseList.getExpense(0).getDescription());
@@ -29,8 +29,8 @@ public class DeleteCommandTest {
     @Test
     public void execute_invalidIndex_doesNotChangeListSize() {
         // User types "delete 5" (out of bounds)
-        DeleteCommand deleteCommand = new DeleteCommand(5);
-        deleteCommand.execute(expenseList, ui);
+        DeleteCommand deleteCommand = new DeleteCommand(ui, 5);
+        deleteCommand.execute(expenseList);
 
         // Should handle the error gracefully and keep the list intact
         assertEquals(2, expenseList.getSize());

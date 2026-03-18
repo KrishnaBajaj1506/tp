@@ -58,8 +58,8 @@ public class SpendSwift {
                     double amount = Double.parseDouble(parts[1]);
                     String description = parts[2];
 
-                    AddCommand addCommand = new AddCommand(description, amount);
-                    addCommand.execute(expenseList, ui);
+                    AddCommand addCommand = new AddCommand(ui, description, amount);
+                    addCommand.execute(expenseList);
                     storage.save(expenseList);
 
                 } catch (NumberFormatException e) {
@@ -80,10 +80,9 @@ public class SpendSwift {
                 }
                 try {
                     int index = Integer.parseInt(deleteParts[1]);
-                    // Assuming you create a DeleteExpense class similar to AddExpense
-                    DeleteCommand deleteCommand = new DeleteCommand(index);
-                    deleteCommand.execute(expenseList, ui);
-                    storage.save(expenseList); // Save immediately after deletion
+                    DeleteCommand deleteCommand = new DeleteCommand(ui, index);
+                    deleteCommand.execute(expenseList);
+                    storage.save(expenseList);
 
                 } catch (NumberFormatException e) {
                     ui.showInvalidIndexFormat();
