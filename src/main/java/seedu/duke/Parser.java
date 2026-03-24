@@ -1,4 +1,5 @@
 package seedu.duke;
+import java.time.LocalDate;
 
 /**
  * Parses user input into meaningful commands.
@@ -65,21 +66,58 @@ public class Parser {
             }
 
             try {
+                // 1. Extract Amount
                 double amount = Double.parseDouble(addParts[0]);
-                String description = addParts[1];
                 if (Double.isNaN(amount) || Double.isInfinite(amount) || amount < 0) {
                     ui.showInvalidAmount();
                     return null;
                 }
+
+                // 2. Extract Description, Category, and Date
+                String remaining = addParts[1];
+                String description = "";
+                String category = null;
+                LocalDate date = null;
+
+                int catIndex = remaining.indexOf("/c ");
+                int dateIndex = remaining.indexOf("/d ");
+
+                // Find where the description ends (before the first flag)
+                int descEnd = remaining.length();
+                if (catIndex != -1 && dateIndex != -1) {
+                    descEnd = Math.min(catIndex, dateIndex);
+                } else if (catIndex != -1) {
+                    descEnd = catIndex;
+                } else if (dateIndex != -1) {
+                    descEnd = dateIndex;
+                }
+
+                description = remaining.substring(0, descEnd).trim();
                 if (description.isEmpty()) {
                     ui.showAddUsage();
                     return null;
                 }
 
-                // COMPILER FIX: Passing null for Category and Date
-                // This allows the app to compile and use your "Others" and "Today" defaults
-                // until Nishchay implements the logic to extract /c and /d.
-                return new AddCommand(ui, description, amount, null, null);
+                // Extract Category if /c is present
+                if (catIndex != -1) {
+                    int catEnd = (dateIndex > catIndex) ? dateIndex : remaining.length();
+                    category = remaining.substring(catIndex + 3, catEnd).trim();
+                }
+
+                // Extract Date if /d is present
+                if (dateIndex != -1) {
+                    int dateEnd = (catIndex > dateIndex) ? catIndex : remaining.length();
+                    String dateString = remaining.substring(dateIndex + 3, dateEnd).trim();
+                    try {
+                        date = LocalDate.parse(dateString); // Strictly expects YYYY-MM-DD
+                    } catch (java.time.format.DateTimeParseException e) {
+                        System.out.println("Invalid date format! Please use YYYY-MM-DD (e.g., 2026-03-24).");
+                        return null;
+                    }
+                }
+
+                // 3. Pass the fully parsed variables to your updated Command!
+                return new AddCommand(ui, description, amount, category, date);
 
             } catch (NumberFormatException e) {
                 ui.showInvalidAmount();
