@@ -66,15 +66,17 @@ public class Ui {
     public void showHelp() {
         System.out.println(LINE);
         System.out.println("Here are the available commands:");
-        System.out.println("  add AMOUNT [/c CATEGORY] [/d DATE] DESC                  - Add a new expense");
-        System.out.println("  list                                                     - List all expenses");
-        System.out.println("  total                                                    - Show total amount spent");
-        System.out.println("  budget AMOUNT                                            - Set a spending budget");
-        System.out.println("  delete INDEX                                             - Delete an expense by index");
-        System.out.println("  edit INDEX [/amount A] [/desc D] [/category C] [/date D] - Edit an existing expense");
-        System.out.println("  help                                                     - Show this help menu");
-        System.out.println("  exit                                                     - Exit the application");
+        System.out.println("  add AMOUNT [/c CATEGORY] [/da DATE] DESC  - Add a new expense");
+        System.out.println("  list                                      - List all expenses");
+        System.out.println("  total                                     - Show total amount spent");
+        System.out.println("  budget AMOUNT                             - Set a spending budget");
+        System.out.println("  delete INDEX                              - Delete an expense by index");
+        System.out.println("  edit INDEX [/a AMOUNT] [/de DESC]         - Edit an existing expense");
+        System.out.println("             [/c CATEGORY] [/da DATE]");
+        System.out.println("  help                                      - Show this help menu");
+        System.out.println("  exit                                      - Exit the application");
         System.out.println("Note: DATE must be in YYYY-MM-DD format (e.g. 2026-03-24).");
+        System.out.println("Available categories: Food, Transport, Shopping, Entertainment, Health, Others");
         System.out.println(LINE);
     }
 
@@ -120,8 +122,9 @@ public class Ui {
      */
     public void showAddUsage() {
         System.out.println(LINE);
-        System.out.println("Usage: add <amount> [/c <category>] [/d <YYYY-MM-DD>] <description>");
-        System.out.println("Example: add 5.50 /c Food /d 2026-03-24 Chicken Rice");
+        System.out.println("Usage: add <amount> [/c <category>] [/da <YYYY-MM-DD>] <description>");
+        System.out.println("Example: add 5.50 /c Food /da 2026-03-24 Chicken Rice");
+        System.out.println("Available categories: Food, Transport, Shopping, Entertainment, Health, Others");
         System.out.println(LINE);
     }
 
@@ -139,8 +142,9 @@ public class Ui {
      */
     public void showEditUsage() {
         System.out.println(LINE);
-        System.out.println("Usage: edit <index> [/amount <amount>] [/desc <description>]"
-                + " [/category <category>] [/date <YYYY-MM-DD>]");
+        System.out.println("Usage: edit <index> [/a <amount>] [/de <description>]"
+                + " [/c <category>] [/da <YYYY-MM-DD>]");
+        System.out.println("Available categories: Food, Transport, Shopping, Entertainment, Health, Others");
         System.out.println("At least one flag must be provided.");
         System.out.println(LINE);
     }
@@ -160,7 +164,7 @@ public class Ui {
     public void showInvalidDateFormat() {
         System.out.println(LINE);
         System.out.println("Date must be in YYYY-MM-DD format and be a valid calendar date.");
-        System.out.println("Example: /d 2026-03-24");
+        System.out.println("Example: /da 2026-03-24");
         System.out.println(LINE);
     }
 
@@ -250,7 +254,7 @@ public class Ui {
      * Displays a warning message when the total spending exceeds the budget.
      *
      * @param budget The budget limit.
-     * @param total The current total spending.
+     * @param total  The current total spending.
      */
     public void showBudgetExceededWarning(double budget, double total) {
         System.out.println(LINE);

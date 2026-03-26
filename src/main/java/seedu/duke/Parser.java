@@ -7,9 +7,8 @@ import java.time.format.ResolverStyle;
 
 /**
  * Parses raw user input strings into executable Command objects.
- * The add command uses /c for category and /d for date.
- * The edit command uses /category for category, /date for date,
- * /amount for amount, and /desc for description.
+ * Both add and edit commands use /c for category and /da for date.
+ * The edit command additionally uses /a for amount and /de for description.
  */
 public class Parser {
 
@@ -105,7 +104,7 @@ public class Parser {
 
     /**
      * Parses the argument string for the add command and returns an AddCommand.
-     * Flags /c and /d are extracted first; the remaining text becomes the description.
+     * Flags /c and /da are extracted first; the remaining text becomes the description.
      *
      * @param arguments The portion of user input after the add keyword.
      * @param ui        The Ui instance used to display error or usage messages.
@@ -137,25 +136,6 @@ public class Parser {
 
         String workingStr = firstSplit[1].trim();
 
-        LocalDate date = null;
-        if (workingStr.contains("/d")) {
-            int flagIdx = workingStr.indexOf("/d");
-            String after = workingStr.substring(flagIdx + 2).trim();
-            String[] tokens = after.split("\\s+", 2);
-
-            if (tokens[0].isEmpty()) {
-                ui.showAddUsage();
-                return null;
-            }
-            date = parseDate(tokens[0], ui);
-            if (date == null) {
-                return null;
-            }
-            String before = workingStr.substring(0, flagIdx).trim();
-            String remaining = tokens.length > 1 ? tokens[1].trim() : "";
-            workingStr = (before + " " + remaining).trim();
-        }
-
         String category = null;
         if (workingStr.contains("/c")) {
             int flagIdx = workingStr.indexOf("/c");
@@ -170,6 +150,25 @@ public class Parser {
             category = value;
             String before = workingStr.substring(0, flagIdx).trim();
             String remaining = (nextSlash >= 0) ? after.substring(nextSlash).trim() : "";
+            workingStr = (before + " " + remaining).trim();
+        }
+
+        LocalDate date = null;
+        if (workingStr.contains("/da")) {
+            int flagIdx = workingStr.indexOf("/da");
+            String after = workingStr.substring(flagIdx + "/da".length()).trim();
+            String[] tokens = after.split("\\s+", 2);
+
+            if (tokens[0].isEmpty()) {
+                ui.showAddUsage();
+                return null;
+            }
+            date = parseDate(tokens[0], ui);
+            if (date == null) {
+                return null;
+            }
+            String before = workingStr.substring(0, flagIdx).trim();
+            String remaining = tokens.length > 1 ? tokens[1].trim() : "";
             workingStr = (before + " " + remaining).trim();
         }
 
@@ -209,7 +208,7 @@ public class Parser {
 
     /**
      * Parses the argument string for the edit command and returns an EditCommand.
-     * At least one of /amount, /desc, /category, or /date must be provided.
+     * At least one of /a, /de, /c, or /da must be provided.
      * Flags may appear in any order.
      *
      * @param arguments The portion of user input after the edit keyword.
@@ -246,9 +245,9 @@ public class Parser {
         String newCategory = null;
         LocalDate newDate = null;
 
-        if (flagSection.contains("/amount")) {
-            int flagIdx = flagSection.indexOf("/amount");
-            String after = flagSection.substring(flagIdx + "/amount".length()).trim();
+        if (flagSection.contains("/a")) {
+            int flagIdx = flagSection.indexOf("/a");
+            String after = flagSection.substring(flagIdx + "/a".length()).trim();
             String[] tokens = after.split("\\s+", 2);
 
             if (tokens[0].isEmpty()) {
@@ -271,9 +270,26 @@ public class Parser {
             flagSection = (before + " " + remaining).trim();
         }
 
-        if (flagSection.contains("/date")) {
-            int flagIdx = flagSection.indexOf("/date");
-            String after = flagSection.substring(flagIdx + "/date".length()).trim();
+        // /de must be extracted before /da to avoid /da matching the start of /de
+        if (flagSection.contains("/de")) {
+            int flagIdx = flagSection.indexOf("/de");
+            String after = flagSection.substring(flagIdx + "/de".length()).trim();
+            int nextSlash = after.indexOf('/');
+            String value = (nextSlash >= 0) ? after.substring(0, nextSlash).trim() : after.trim();
+
+            if (value.isEmpty()) {
+                ui.showEditUsage();
+                return null;
+            }
+            newDescription = value;
+            String before = flagSection.substring(0, flagIdx).trim();
+            String remaining = (nextSlash >= 0) ? after.substring(nextSlash).trim() : "";
+            flagSection = (before + " " + remaining).trim();
+        }
+
+        if (flagSection.contains("/da")) {
+            int flagIdx = flagSection.indexOf("/da");
+            String after = flagSection.substring(flagIdx + "/da".length()).trim();
             String[] tokens = after.split("\\s+", 2);
 
             if (tokens[0].isEmpty()) {
@@ -289,25 +305,9 @@ public class Parser {
             flagSection = (before + " " + remaining).trim();
         }
 
-        if (flagSection.contains("/desc")) {
-            int flagIdx = flagSection.indexOf("/desc");
-            String after = flagSection.substring(flagIdx + "/desc".length()).trim();
-            int nextSlash = after.indexOf('/');
-            String value = (nextSlash >= 0) ? after.substring(0, nextSlash).trim() : after.trim();
-
-            if (value.isEmpty()) {
-                ui.showEditUsage();
-                return null;
-            }
-            newDescription = value;
-            String before = flagSection.substring(0, flagIdx).trim();
-            String remaining = (nextSlash >= 0) ? after.substring(nextSlash).trim() : "";
-            flagSection = (before + " " + remaining).trim();
-        }
-
-        if (flagSection.contains("/category")) {
-            int flagIdx = flagSection.indexOf("/category");
-            String after = flagSection.substring(flagIdx + "/category".length()).trim();
+        if (flagSection.contains("/c")) {
+            int flagIdx = flagSection.indexOf("/c");
+            String after = flagSection.substring(flagIdx + "/c".length()).trim();
             int nextSlash = after.indexOf('/');
             String value = (nextSlash >= 0) ? after.substring(0, nextSlash).trim() : after.trim();
 
