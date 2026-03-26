@@ -104,6 +104,20 @@ public class Parser {
                 return null;
             }
 
+        case "sort":
+            if (!arguments.equals("category") && !arguments.equals("date")) {
+                ui.showSortUsage();
+                return null;
+            }
+            return new SortCommand(ui, arguments);
+
+        case "stats":
+            if (!arguments.isEmpty()) {
+                ui.showUnknownCommand();
+                return null;
+            }
+            return new StatisticsCommand(ui);
+
         default:
             ui.showUnknownCommand();
             return null;
@@ -357,3 +371,4 @@ public class Parser {
         }
     }
 }
+

@@ -1,4 +1,5 @@
 package seedu.duke;
+import java.util.Map;
 
 /**
  * Handles all user interaction for the SpendSwift application.
@@ -311,4 +312,52 @@ public class Ui {
         }
         System.out.println(LINE);
     }
+    /**
+     * Displays the expense list after it has been sorted.
+     *
+     * @param expenseList The sorted list of expenses.
+     * @param sortBy      The criterion used for sorting ("category" or "date").
+     */
+    public void showSorted(ExpenseList expenseList, String sortBy) {
+        System.out.println(LINE);
+        System.out.println("Expenses sorted by " + sortBy + ":");
+        if (expenseList.getSize() == 0) {
+            System.out.println("  (no expenses to display)");
+        } else {
+            for (int i = 0; i < expenseList.getSize(); i++) {
+                System.out.println("  " + (i + 1) + ". " + expenseList.getExpense(i));
+            }
+        }
+        System.out.println(LINE);
+    }
+
+    /**
+     * Displays the correct usage format for the sort command.
+     */
+    public void showSortUsage() {
+        System.out.println(LINE);
+        System.out.println("Usage: sort category   (alphabetical by category)");
+        System.out.println("       sort date       (chronological by date)");
+        System.out.println(LINE);
+    }
+    /**
+     * Displays a per-category breakdown of total spending.
+     *
+     * @param totals A map of category name to total amount spent in that category.
+     * @param count  The total number of expenses analysed.
+     */
+    public void showStatistics(Map<String, Double> totals, int count) {
+        System.out.println(LINE);
+        System.out.println("Spending statistics (" + count + " expense(s)):");
+        if (totals.isEmpty()) {
+            System.out.println("  No expenses to summarise.");
+        } else {
+            for (Map.Entry<String, Double> entry : totals.entrySet()) {
+                System.out.println("  " + entry.getKey()
+                        + ": $" + String.format("%.2f", entry.getValue()));
+            }
+        }
+        System.out.println(LINE);
+    }
 }
+
