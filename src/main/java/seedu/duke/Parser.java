@@ -111,6 +111,13 @@ public class Parser {
             }
             return new SortCommand(ui, arguments);
 
+        case "stats":
+            if (!arguments.isEmpty()) {
+                ui.showUnknownCommand();
+                return null;
+            }
+            return new StatisticsCommand(ui);
+
         default:
             ui.showUnknownCommand();
             return null;

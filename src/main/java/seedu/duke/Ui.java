@@ -1,4 +1,5 @@
 package seedu.duke;
+import java.util.Map;
 
 /**
  * Handles all user interaction for the SpendSwift application.
@@ -337,6 +338,25 @@ public class Ui {
         System.out.println(LINE);
         System.out.println("Usage: sort category   (alphabetical by category)");
         System.out.println("       sort date       (chronological by date)");
+        System.out.println(LINE);
+    }
+    /**
+     * Displays a per-category breakdown of total spending.
+     *
+     * @param totals A map of category name to total amount spent in that category.
+     * @param count  The total number of expenses analysed.
+     */
+    public void showStatistics(Map<String, Double> totals, int count) {
+        System.out.println(LINE);
+        System.out.println("Spending statistics (" + count + " expense(s)):");
+        if (totals.isEmpty()) {
+            System.out.println("  No expenses to summarise.");
+        } else {
+            for (Map.Entry<String, Double> entry : totals.entrySet()) {
+                System.out.println("  " + entry.getKey()
+                        + ": $" + String.format("%.2f", entry.getValue()));
+            }
+        }
         System.out.println(LINE);
     }
 }
