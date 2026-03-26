@@ -104,6 +104,13 @@ public class Parser {
                 return null;
             }
 
+        case "sort":
+            if (!arguments.equals("category") && !arguments.equals("date")) {
+                ui.showSortUsage();
+                return null;
+            }
+            return new SortCommand(ui, arguments);
+
         default:
             ui.showUnknownCommand();
             return null;

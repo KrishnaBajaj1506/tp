@@ -311,4 +311,32 @@ public class Ui {
         }
         System.out.println(LINE);
     }
+    /**
+     * Displays the expense list after it has been sorted.
+     *
+     * @param expenseList The sorted list of expenses.
+     * @param sortBy      The criterion used for sorting ("category" or "date").
+     */
+    public void showSorted(ExpenseList expenseList, String sortBy) {
+        System.out.println(LINE);
+        System.out.println("Expenses sorted by " + sortBy + ":");
+        if (expenseList.getSize() == 0) {
+            System.out.println("  (no expenses to display)");
+        } else {
+            for (int i = 0; i < expenseList.getSize(); i++) {
+                System.out.println("  " + (i + 1) + ". " + expenseList.getExpense(i));
+            }
+        }
+        System.out.println(LINE);
+    }
+
+    /**
+     * Displays the correct usage format for the sort command.
+     */
+    public void showSortUsage() {
+        System.out.println(LINE);
+        System.out.println("Usage: sort category   (alphabetical by category)");
+        System.out.println("       sort date       (chronological by date)");
+        System.out.println(LINE);
+    }
 }
