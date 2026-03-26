@@ -2,7 +2,6 @@ package seedu.duke;
 
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class AddCommandTest {
 
@@ -10,7 +9,7 @@ public class AddCommandTest {
     public void execute_singleExpense_expenseAddedToList() {
         ExpenseList expenseList = new ExpenseList();
         Ui ui = new Ui();
-        AddCommand addCommand = new AddCommand(ui, "Coffee", 5.50);
+        AddCommand addCommand = new AddCommand(ui, "Coffee", 5.50, null, null);
 
         addCommand.execute(expenseList);
 
@@ -24,8 +23,8 @@ public class AddCommandTest {
         ExpenseList expenseList = new ExpenseList();
         Ui ui = new Ui();
 
-        AddCommand firstExpense = new AddCommand(ui, "Coffee", 5.50);
-        AddCommand secondExpense = new AddCommand(ui, "Lunch", 12.30);
+        AddCommand firstExpense = new AddCommand(ui, "Coffee", 5.50, null, null);
+        AddCommand secondExpense = new AddCommand(ui, "Lunch", 12.30, null, null);
 
         firstExpense.execute(expenseList);
         secondExpense.execute(expenseList);
@@ -40,13 +39,25 @@ public class AddCommandTest {
     }
 
     @Test
-    public void execute_zeroAmount_throwsAssertionError() {
+    public void execute_withCategoryAndDate_expenseStoredCorrectly() {
+        ExpenseList expenseList = new ExpenseList();
         Ui ui = new Ui();
+        AddCommand addCommand = new AddCommand(ui, "Coffee", 5.50, "Food", null);
 
-        AssertionError thrown = assertThrows(AssertionError.class, () -> {
-            new AddCommand(ui, "Free sample", 0.0);
-        });
+        addCommand.execute(expenseList);
 
-        assertEquals("Amount must be positive", thrown.getMessage());
+        assertEquals("Food", expenseList.getExpense(0).getCategory());
+    }
+
+    @Test
+    public void execute_zeroAmount_expenseAddedWithZeroAmount() {
+        ExpenseList expenseList = new ExpenseList();
+        Ui ui = new Ui();
+        AddCommand addCommand = new AddCommand(ui, "Free sample", 0.0, null, null);
+
+        addCommand.execute(expenseList);
+
+        assertEquals(1, expenseList.getSize());
+        assertEquals(0.0, expenseList.getExpense(0).getAmount(), 0.0001);
     }
 }

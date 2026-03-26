@@ -39,7 +39,12 @@ public class StorageTest {
     @Test
     public void load_malformedLine_skipsMalformedData() throws IOException {
         Path dataFilePath = tempDir.resolve("expenses-malformed.txt");
-        Files.writeString(dataFilePath, "8.50 | Breakfast\nmalformed line\n3.20 | Coffee\n");
+        // Valid lines use AMOUNT | DATE | CATEGORY | DESCRIPTION format
+        // "malformed line" has no separators at all and is skipped
+        Files.writeString(dataFilePath,
+                "8.50 | 2026-03-24 | Food | Breakfast\n"
+                        + "malformed line\n"
+                        + "3.20 | 2026-03-24 | Drinks | Coffee\n");
 
         Storage storage = new Storage(dataFilePath.toString(), new Ui());
         ExpenseList loadedList = new ExpenseList();
@@ -53,7 +58,9 @@ public class StorageTest {
     @Test
     public void load_invalidAmountLine_skipsInvalidAmountData() throws IOException {
         Path dataFilePath = tempDir.resolve("expenses-invalid-amount.txt");
-        Files.writeString(dataFilePath, "invalidAmount | Dinner\n6.75 | Snacks\n");
+        Files.writeString(dataFilePath,
+                "invalidAmount | 2026-03-24 | Food | Dinner\n"
+                        + "6.75 | 2026-03-24 | Food | Snacks\n");
 
         Storage storage = new Storage(dataFilePath.toString(), new Ui());
         ExpenseList loadedList = new ExpenseList();
@@ -67,7 +74,9 @@ public class StorageTest {
     @Test
     public void load_negativeAmountLine_skipsInvalidAmountData() throws IOException {
         Path dataFilePath = tempDir.resolve("expenses-negative-amount.txt");
-        Files.writeString(dataFilePath, "-2.50 | Dinner\n1.00 | Apple\n");
+        Files.writeString(dataFilePath,
+                "-2.50 | 2026-03-24 | Food | Dinner\n"
+                        + "1.00 | 2026-03-24 | Food | Apple\n");
 
         Storage storage = new Storage(dataFilePath.toString(), new Ui());
         ExpenseList loadedList = new ExpenseList();

@@ -3,6 +3,10 @@ package seedu.duke;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
+import java.time.format.ResolverStyle;
 import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -10,10 +14,24 @@ import java.util.logging.Logger;
 /**
  * Handles reading and writing expense data to a text file
  * so that data persists between sessions.
+ * Each line in the file stores one expense in the format: AMOUNT | DATE | CATEGORY | DESCRIPTION.
  */
 public class Storage {
     private static final String SEPARATOR = " | ";
+    private static final String SPLIT_REGEX = "\\s*\\|\\s*";
+
+    /** Number of fields expected on each saved line. */
+    private static final int FIELD_COUNT = 4;
+    private static final int IDX_AMOUNT      = 0;
+    private static final int IDX_DATE        = 1;
+    private static final int IDX_CATEGORY    = 2;
+    private static final int IDX_DESCRIPTION = 3;
+
+    private static final DateTimeFormatter DATE_FORMAT =
+            DateTimeFormatter.ofPattern("uuuu-MM-dd").withResolverStyle(ResolverStyle.STRICT);
+
     private static final Logger logger = Logger.getLogger(Storage.class.getName());
+
     private final String filePath;
     private final Ui ui;
 
@@ -21,7 +39,7 @@ public class Storage {
      * Constructs a Storage object with the given file path and Ui instance.
      *
      * @param filePath The path to the data file.
-     * @param ui The Ui object used to display messages and warnings.
+     * @param ui       The Ui object used to display messages and warnings.
      */
     public Storage(String filePath, Ui ui) {
         if (filePath == null || filePath.trim().isEmpty()) {
@@ -36,7 +54,7 @@ public class Storage {
 
     /**
      * Loads expenses from the data file into the given ExpenseList.
-     * If the file does not exist, an empty list is returned.
+     * Malformed lines are skipped with a warning; a missing file is silently ignored.
      *
      * @param expenseList The ExpenseList to populate with saved data.
      */
@@ -78,8 +96,8 @@ public class Storage {
         File file = new File(filePath);
         File parentDir = file.getParentFile();
         if (parentDir != null && !parentDir.exists()) {
-            boolean isCreated = parentDir.mkdirs();
-            if (!isCreated) {
+            boolean created = parentDir.mkdirs();
+            if (!created) {
                 ui.showSaveWarning();
                 logger.warning("Could not create data directory: " + parentDir.getAbsolutePath());
                 return;
@@ -88,8 +106,13 @@ public class Storage {
         try (FileWriter writer = new FileWriter(file)) {
             for (int i = 0; i < expenseList.getSize(); i++) {
                 Expense expense = expenseList.getExpense(i);
-                writer.write(expense.getAmount() + SEPARATOR + expense.getDescription()
-                        + System.lineSeparator());
+                writer.write(
+                        expense.getAmount()
+                                + SEPARATOR + expense.getDate()
+                                + SEPARATOR + expense.getCategory()
+                                + SEPARATOR + expense.getDescription()
+                                + System.lineSeparator()
+                );
             }
         } catch (IOException e) {
             ui.showSaveWarning();
@@ -99,32 +122,57 @@ public class Storage {
 
     /**
      * Parses a single line from the data file into an Expense object.
+     * Returns null and displays a warning if the line is malformed or contains invalid values.
      *
-     * @param line The line to parse, in the format "AMOUNT | DESCRIPTION".
+     * @param line The line to parse.
      * @return The parsed Expense, or null if the line is malformed.
      */
     private Expense parseLine(String line) {
         if (line == null || line.trim().isEmpty()) {
             return null;
         }
-        String[] parts = line.split("\\|", 2);
-        if (parts.length < 2) {
+
+        String[] parts = line.split(SPLIT_REGEX, FIELD_COUNT);
+        if (parts.length < FIELD_COUNT) {
             ui.showMalformedLineWarning(line);
-            logger.warning("Malformed storage line skipped: " + line);
+            logger.warning("Malformed storage line (expected 4 fields): " + line);
             return null;
         }
+
+        String amountStr   = parts[IDX_AMOUNT].trim();
+        String dateStr     = parts[IDX_DATE].trim();
+        String categoryStr = parts[IDX_CATEGORY].trim();
+        String description = parts[IDX_DESCRIPTION].trim();
+
+        double amount;
         try {
-            double amount = Double.parseDouble(parts[0].trim());
-            String description = parts[1].trim();
-            if (description.isEmpty()) {
-                ui.showMalformedLineWarning(line);
-                logger.warning("Storage line with empty description skipped: " + line);
-                return null;
-            }
-            return new Expense(description, amount);
+            amount = Double.parseDouble(amountStr);
+        } catch (NumberFormatException e) {
+            ui.showInvalidAmountLineWarning(line);
+            logger.log(Level.WARNING, "Storage line with invalid amount: " + line, e);
+            return null;
+        }
+
+        LocalDate date;
+        try {
+            date = LocalDate.parse(dateStr, DATE_FORMAT);
+        } catch (DateTimeParseException e) {
+            ui.showMalformedLineWarning(line);
+            logger.log(Level.WARNING, "Storage line with invalid date: " + line, e);
+            return null;
+        }
+
+        if (description.isEmpty()) {
+            ui.showMalformedLineWarning(line);
+            logger.warning("Storage line with empty description: " + line);
+            return null;
+        }
+
+        try {
+            return new Expense(description, amount, categoryStr, date);
         } catch (IllegalArgumentException e) {
             ui.showInvalidAmountLineWarning(line);
-            logger.log(Level.WARNING, "Storage line with invalid data skipped: " + line, e);
+            logger.log(Level.WARNING, "Storage line rejected by Expense constructor: " + line, e);
             return null;
         }
     }

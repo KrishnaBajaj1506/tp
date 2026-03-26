@@ -1,6 +1,9 @@
 package seedu.duke;
 
 import org.junit.jupiter.api.Test;
+
+import java.time.LocalDate;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -8,10 +11,19 @@ public class ExpenseTest {
 
     @Test
     public void toString_validExpense_formatsCorrectly() {
+        LocalDate date = LocalDate.of(2026, 3, 24);
+        Expense expense = new Expense("Chicken Rice Lunch", 5.50, "Food", date);
+
+        String expected = "Chicken Rice Lunch ($5.50) [Food] [2026-03-24]";
+
+        assertEquals(expected, expense.toString());
+    }
+
+    @Test
+    public void toString_defaultCategoryAndDate_usesOthersAndToday() {
         Expense expense = new Expense("Chicken Rice Lunch", 5.50);
 
-        // This checks if your String.format("%.2f", amount) logic works!
-        String expected = "Chicken Rice Lunch ($5.50)";
+        String expected = "Chicken Rice Lunch ($5.50) [Others] [" + LocalDate.now() + "]";
 
         assertEquals(expected, expense.toString());
     }
@@ -26,6 +38,18 @@ public class ExpenseTest {
     public void getAmount_validExpense_returnsCorrectAmount() {
         Expense expense = new Expense("Bus ticket", 1.50);
         assertEquals(1.50, expense.getAmount());
+    }
+
+    @Test
+    public void getCategory_defaultCategory_returnsOthers() {
+        Expense expense = new Expense("Bus ticket", 1.50);
+        assertEquals("Others", expense.getCategory());
+    }
+
+    @Test
+    public void getDate_defaultDate_returnsToday() {
+        Expense expense = new Expense("Bus ticket", 1.50);
+        assertEquals(LocalDate.now(), expense.getDate());
     }
 
     @Test
