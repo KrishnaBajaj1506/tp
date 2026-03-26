@@ -1,4 +1,5 @@
 package seedu.duke;
+import java.time.LocalDate;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -71,10 +72,31 @@ public class Parser {
             return parseDeleteCommand(arguments, ui);
 
         case "total":
+            if (!arguments.isEmpty()) {
+                ui.showUnknownCommand();
+                return null;
+            }
             return new TotalCommand(ui);
 
         case "edit":
             return parseEditCommand(arguments, ui);
+
+        case "budget":
+            if (arguments.isEmpty()) {
+                ui.showBudgetUsage();
+                return null;
+            }
+            try {
+                double budgetAmount = Double.parseDouble(arguments);
+                if (budgetAmount < 0) {
+                    ui.showInvalidBudget();
+                    return null;
+                }
+                return new BudgetCommand(ui, budgetAmount);
+            } catch (NumberFormatException e) {
+                ui.showInvalidBudget();
+                return null;
+            }
 
         default:
             ui.showUnknownCommand();

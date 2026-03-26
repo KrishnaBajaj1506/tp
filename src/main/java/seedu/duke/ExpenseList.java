@@ -8,9 +8,11 @@ import java.util.ArrayList;
  */
 public class ExpenseList {
     private final ArrayList<Expense> expenses;
+    private double budget;
 
     public ExpenseList() {
         this.expenses = new ArrayList<>();
+        this.budget = -1;
     }
 
     /**
@@ -63,6 +65,58 @@ public class ExpenseList {
      * @param index The 0-based position of the expense to delete.
      * @return The expense that was removed.
      * @throws IndexOutOfBoundsException If the index is out of range.
+     */
+    public void setBudget(double budget) {
+        if (budget < 0) {
+            throw new IllegalArgumentException("Budget cannot be negative");
+        }
+        this.budget = budget;
+    }
+
+    /**
+     * Returns the currently set budget.
+     *
+     * @return The budget amount, or -1 if no budget has been set.
+     */
+    public double getBudget() {
+        return budget;
+    }
+
+    /**
+     * Returns whether a budget has been set.
+     *
+     * @return true if a budget exists, false otherwise.
+     */
+    public boolean hasBudget() {
+        return budget >= 0;
+    }
+
+    /**
+     * Calculates the total amount of all expenses.
+     *
+     * @return The total expense amount.
+     */
+    public double getTotalAmount() {
+        double total = 0.0;
+        for (Expense expense : expenses) {
+            total += expense.getAmount();
+        }
+        return total;
+    }
+
+    /**
+     * Checks whether the total spending exceeds the budget.
+     *
+     * @return true if total spending is greater than the budget, false otherwise.
+     */
+    public boolean isOverBudget() {
+        return hasBudget() && getTotalAmount() > budget;
+    }
+
+    /**
+     * Removes an expense from the list and returns the removed item.
+     * 
+     * @return 
      */
     public Expense deleteExpense(int index) throws IndexOutOfBoundsException {
         return expenses.remove(index);

@@ -1,6 +1,7 @@
 package seedu.duke;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 /**
  * Represents a single financial expense tracked by the user.
@@ -88,15 +89,15 @@ public class Expense {
     }
 
     /**
-     * Returns a formatted string showing the description, amount, category, and date.
+     * Returns a string representation of the expense, formatting the amount to two decimal places
+     * and the date to a readable "MMM dd yyyy" format.
      *
-     * @return A string in the form: DESCRIPTION ($AMOUNT) [CATEGORY] [DATE].
+     * @return A formatted string showing the description, cost, category, and date.
      */
     @Override
     public String toString() {
-        return description
-                + " ($" + String.format("%.2f", amount) + ")"
-                + " [" + category + "]"
-                + " [" + date + "]";
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMM dd yyyy");
+        return String.format("%s ($%.2f) [Cat: %s] [Date: %s]",
+                description, amount, category, date.format(formatter));
     }
 }
