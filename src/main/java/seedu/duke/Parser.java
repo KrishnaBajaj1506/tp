@@ -1,5 +1,4 @@
 package seedu.duke;
-import java.time.LocalDate;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
